@@ -1,0 +1,56 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Convert HTML to PDF",
+    "description": "Microservice for converting HTML files to PDF",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/zip"
+  ],
+  "produces": [
+    "application/pdf"
+  ],
+  "paths": {
+    "/html-pdf": {
+      "post": {
+        "tags": [
+          "Convert"
+        ],
+        "description": "Convert HTML to PDF",
+        "produces": [
+          "application/pdf"
+        ],
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "description": "zip archive containing index.html"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversion completed successfully",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "file",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "• Upload a file with the .zip extension\n • File size should be less than 2GB\n • Upload an archive\n • Archive must contain the index.html file\n • Something went wrong..."
+          }
+        }
+      }
+    }
+  }
+}

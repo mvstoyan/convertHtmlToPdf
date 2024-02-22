@@ -1,8 +1,8 @@
 import express from "express";
-import { convertToPDF } from "../controllers/convertController.js";
+import { handleConversion } from "../controllers/convertController.js";
 
 const router = express.Router();
 
-router.post("/html-pdf", convertToPDF);
+router.post("/html-pdf", handleConversion);
 
 export default router;

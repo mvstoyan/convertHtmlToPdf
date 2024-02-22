@@ -5,28 +5,28 @@ class CustomError {
   }
 }
 
-// размер загружаемого файла превышает установленный лимит
+// The size of the uploaded file exceeds the set limit
 class FileSizeError extends CustomError {
   constructor(message = "File size exceeds the limit", statusCode = 400) {
     super(message, statusCode);
   }
 }
 
-// загруженный файл имеет недопустимый формат
+// The uploaded file has an invalid format
 class InvalidFileTypeError extends CustomError {
   constructor(message = "Invalid file type", statusCode = 400) {
     super(message, statusCode);
   }
 }
 
-// запрашиваемый файл не найден
+// The requested file was not found
 class FileNotFoundError extends CustomError {
   constructor(message = "File not found", statusCode = 404) {
     super(message, statusCode);
   }
 }
 
-// произошла ошибка в процессе конвертации файла в PDF
+// An error occurred during the process of converting the file to PDF
 class ConversionError extends CustomError {
   constructor(message = "Error occurred during conversion", statusCode = 500) {
     super(message, statusCode);
@@ -40,8 +40,3 @@ export {
   FileNotFoundError,
   ConversionError,
 };
-
-
-
-
-// произошла ошибка в процессе конвертации файла в PDF
