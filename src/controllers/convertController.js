@@ -16,9 +16,9 @@ import {
 } from "../errors/customErrors.js";
 
 
-const GIGABYTE = Math.pow(1024, 3);
-const MAX_SIZE = 2 * GIGABYTE;
-const FILE_TYPE = "zip";
+const GIGABYTE = Math.pow(1024, 3); // Определение константы для размера гигабайта в байтах
+const MAX_SIZE = 2 * GIGABYTE; // Определение максимального размера файла в байтах
+const FILE_TYPE = "zip"; // Определение типа файла, ожидаемого в загрузке
 
 export const handleConversion = async (req, res, next) => {
   /* 
@@ -52,77 +52,90 @@ export const handleConversion = async (req, res, next) => {
         }
     */
 
-  const convertStart = Date.now();
+  const convertStart = Date.now(); // Запись времени начала выполнения операции конвертации
   const upload = multer({
+    // Настройка multer для загрузки файлов
     storage: multer.diskStorage({
-      destination: DESTINATION_PATH,
+      destination: DESTINATION_PATH, // Указание директории назначения для сохранения файла
       filename: function (req, file, cb) {
-        cb(null, file.originalname);
+        // Функция для генерации имени файла
+        cb(null, file.originalname); // Используется оригинальное имя файла
       },
     }),
     limits: {
-      fileSize: MAX_SIZE,
+      fileSize: MAX_SIZE, // Ограничение размера файла
     },
     fileFilter(req, file, cb) {
-      const extension = path.extname(file.originalname) === `.${FILE_TYPE}`;
+      // Функция фильтрации загружаемых файлов
+      const extension = path.extname(file.originalname) === `.${FILE_TYPE}`; // Проверка расширения файла
       if (extension) {
-        return cb(null, true);
+        // Если расширение соответствует ожидаемому типу
+        return cb(null, true); // Пропуск файла
       } else {
-        const message = `Upload a file with the .${FILE_TYPE} extension`;
-        return cb(new InvalidFileTypeError(message), false);
+        // Если расширение не соответствует ожидаемому типу
+        const message = `Upload a file with the .${FILE_TYPE} extension`; // Формирование сообщения об ошибке
+        return cb(new InvalidFileTypeError(message), false); // Отклонение файла и генерация ошибки
       }
     },
-  }).single("file");
+  }).single("file"); // Загрузка только одного файла
 
   upload(req, res, async function (err) {
+    // Запуск middleware для обработки загруженного файла
     if (err instanceof multer.MulterError) {
+      // Обработка ошибок multer
       if (err.code === "LIMIT_FILE_SIZE") {
+        // Если превышен лимит размера файла
         const message = `File size should be less than ${
           MAX_SIZE / GIGABYTE
-        }GB.`;
-        return next(new FileSizeError(message));
+        }GB.`; // Формирование сообщения об ошибке
+        return next(new FileSizeError(message)); // Передача ошибки дальше по middleware
       }
-      return next(err);
+      return next(err); // Обработка остальных ошибок multer
     } else if (err) {
-      return next(err);
+      // Если возникла другая ошибка
+      return next(err); // Обработка ошибки
     }
 
-    const zipArch = req.file;
+    const zipArch = req.file; // Получение загруженного архива
     if (!zipArch) {
-      return next(new InvalidFileTypeError("Upload an archive"));
+      // Если архив не загружен
+      return next(new InvalidFileTypeError("Upload an archive")); // Генерация ошибки
     }
 
-    const zipPath = zipArch.path;
-    const extractedFilesFolder = extractFiles(zipPath, EXTRACT_PATH);
+    const zipPath = zipArch.path; // Получение пути к загруженному архиву
+    const extractedFilesFolder = extractFiles(zipPath, EXTRACT_PATH); // Извлечение файлов из архива
     if (!extractedFilesFolder) {
-      return next(new FileNotFoundError("Files not found"));
+      // Если файлы не были извлечены
+      return next(new FileNotFoundError("Files not found")); // Генерация ошибки
     }
 
-    const html = findHtml(extractedFilesFolder);
+    const html = findHtml(extractedFilesFolder); // Поиск HTML-файла в извлеченных файлах
     if (!html) {
+      // Если HTML-файл не найден
       return next(
         new FileNotFoundError("Archive must contain the index.html file")
-      );
+      ); // Генерация ошибки
     }
 
-    const pdf = await htmlToPdf(html);
+    const pdf = await htmlToPdf(html); // Конвертация HTML в PDF
     if (!pdf) {
-      return next(new ConversionError("Something went wrong..."));
+      // Если PDF не был создан
+      return next(new ConversionError("Something went wrong...")); // Генерация ошибки
     }
 
-    const pdfName = path.parse(zipArch.originalname).name + ".pdf";
-    fs.writeFileSync(`${EXTRACT_PATH}/${pdfName}`, pdf);
+    const pdfName = path.parse(zipArch.originalname).name + ".pdf"; // Формирование имени PDF-файла
+    fs.writeFileSync(`${EXTRACT_PATH}/${pdfName}`, pdf); // Запись PDF-файла на диск
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `attachment; filename=${pdfName}`);
-    res.contentType("application/pdf");
-    res.status(OK).send(pdf);
+    res.setHeader("Content-Type", "application/pdf"); // Установка заголовка Content-Type
+    res.setHeader("Content-Disposition", `attachment; filename=${pdfName}`); // Установка заголовка Content-Disposition
+    res.contentType("application/pdf"); // Установка типа контента
+    res.status(OK).send(pdf); // Отправка PDF-файла в ответ на запрос
 
-    const finalExecutionTime = countExecutionTime(convertStart);
+    const finalExecutionTime = countExecutionTime(convertStart); // Подсчет времени выполнения операции
     addLog(
       "handleConversion",
       "Conversion completed successfully",
       finalExecutionTime
-    );
+    ); // Журналирование успешного завершения операции
   });
 };
