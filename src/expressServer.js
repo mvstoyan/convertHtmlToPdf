@@ -19,24 +19,23 @@ const swaggerFile = require("./../swagger-output.json"); // use the require meth
 
 const app = express();
 
-const port = 5000; // Порт, на котором будет работать сервер
-const DESTINATION_PATH = "./uploads"; // Путь к директории для загрузки файлов
-const EXTRACT_PATH = "./output"; // Путь к директории для извлечения файлов
-const LOGFILE = "./logs.json"; // Путь к файлу журнала
+const port = 5000;
+const DESTINATION_PATH = "./uploads";
+const EXTRACT_PATH = "./output";
+const LOGFILE = "./logs.json";
 
-// Настройка пути для доступа к документации Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
-// Middleware для создания необходимых директорий и файла журнала перед обработкой запроса
+// Middleware for creating necessary directories and log file before request handling
 app.use((req, res, next) => {
-  createFile(LOGFILE); // Создание файла журнала
-  createDirectory(DESTINATION_PATH); // Создание директории для загрузки файлов
-  createDirectory(EXTRACT_PATH); // Создание директории для извлечения файлов
-  next(); // Переход к следующему обработчику
+  createFile(LOGFILE);
+  createDirectory(DESTINATION_PATH);
+  createDirectory(EXTRACT_PATH);
+  next();
 });
 
-app.use(express.json()); // Middleware для парсинга тела запроса в формате JSON
-app.use(router /* #swagger.tags = ['Convert'] */); // Middleware для обработки маршрутов конвертации
-app.use(errorHandler); // Middleware для обработки ошибок
+app.use(express.json());
+app.use(router /* #swagger.tags = ['Convert'] */);
+app.use(errorHandler);
 
 export { app, port, DESTINATION_PATH, EXTRACT_PATH };

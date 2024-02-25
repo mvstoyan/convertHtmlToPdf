@@ -1,7 +1,6 @@
 const countExecutionTime = (startTime = Date.now()) => {
-  // Определение функции countExecutionTime с параметром startTime, по умолчанию равным текущему времени
-  const endTime = Date.now(); // Получение текущего времени окончания выполнения функции
-  return endTime - startTime || 0; // Возвращение времени выполнения в миллисекундах, либо 0, если время не задано
+  const endTime = Date.now(); // Get current time when function execution ends
+  return endTime - startTime || 0; // Return execution time in milliseconds, 0 if time is not provided
 };
 
 export default countExecutionTime;

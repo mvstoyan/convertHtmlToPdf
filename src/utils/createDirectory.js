@@ -3,17 +3,17 @@ import addLog from "./addLog.js";
 import countExecutionTime from "./countExecutionTime.js";
 
 async function createDirectory(path) {
-  const start = Date.now(); // время начала выполнения
+  const start = Date.now();
 
   try {
-    await mkdir(path, { recursive: true }); // Асин создание директории с указанным путем
-    const createTime = countExecutionTime(start); // время выполнения
-    addLog("createDirectory", `Folder created. Path: ${path}`, createTime); // добавим запись в журнал - ок
-    console.log(`Directory created at ${path}`); // директория создана- ок
+    await mkdir(path, { recursive: true }); // Create directory with the specified path
+    const createTime = countExecutionTime(start);
+    addLog("createDirectory", `Folder created. Path: ${path}`, createTime); // Add log entry
+    console.log(`Directory created at ${path}`); // Directory created
   } catch (err) {
-    const createTime = countExecutionTime(start); // время выполнения
-    addLog("createDirectory", `Error: ${err.message}`, createTime); // добавим запись в журнал - ошибка
-    console.error(`Error creating directory at ${path}: ${err.message}`); 
+    const createTime = countExecutionTime(start);
+    addLog("createDirectory", `Error: ${err.message}`, createTime); // Add log entry for error
+    console.error(`Error creating directory at ${path}: ${err.message}`);
     throw err;
   }
 }

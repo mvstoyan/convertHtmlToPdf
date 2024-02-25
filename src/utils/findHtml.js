@@ -3,27 +3,26 @@ import addLog from "./addLog.js";
 import countExecutionTime from "./countExecutionTime.js";
 import { FileNotFoundError } from "../errors/customErrors.js";
 
-const fileName = "index.html"; // Имя файла, который ищем в указанной директории
+const fileName = "index.html";
 
 function findHtml(folder) {
-  const start = Date.now(); // Запись времени начала выполнения функции
-  let message = ""; // Переменная для сообщения о статусе операции
+  const start = Date.now();
+  let message = "";
 
-  const pathNormalize = (str) => str.replace(/\\/g, "/"); // Функция для нормализации пути (замена обратных слешей на прямые)
+  const pathNormalize = (str) => str.replace(/\\/g, "/"); // Normalize the path
 
-  let [html] = globSync(`${folder}/**/${fileName}`); // Поиск файла index.html в указанной директории
+  let [html] = globSync(`${folder}/**/${fileName}`); // Search for index.html in the specified directory
   try {
-    html = pathNormalize(html); // Нормализация найденного пути
-    message = "The index.html file is found"; // Сообщение об успешном нахождении файла
-    return html; // Возвращаем путь к найденному файлу
+    html = pathNormalize(html); // Normalize the found path
+    message = "The index.html file is found";
+    return html; // Return the path to the found file
   } catch (err) {
-    message = `The index.html file is not found`; // Сообщение об ошибке при поиске файла
-    throw new FileNotFoundError(message); // Выброс исключения FileNotFoundError
+    message = `The index.html file is not found`;
+    throw new FileNotFoundError(message);
   } finally {
-    const executionTime = countExecutionTime(start); // Подсчет времени выполнения операции
-    addLog("findHtml", message, executionTime); // Журналирование события
+    const executionTime = countExecutionTime(start);
+    addLog("findHtml", message, executionTime);
   }
 }
-
 
 export default findHtml;
