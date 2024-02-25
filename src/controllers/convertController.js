@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import extractFiles from "../utils/extractFiles.js";
-import htmlToPdf from "../utils/html-pdf.js";
+import convertHtmlToPdf from "../utils/convertHtmlToPdf.js";
 import findHtml from "../utils/findHtml.js";
 import addLog from "../utils/addLog.js";
 import countExecutionTime from "../utils/countExecutionTime.js";
@@ -24,18 +24,12 @@ export const handleConversion = async (req, res, next) => {
   /* 
         #swagger.tags = ['Convert']
         #swagger.description = 'Convert HTML to PDF' 
-    */
-
-  /*    
         #swagger.parameters['singleFile'] = {
             in: 'formData',
             type: 'file',
             name: 'file',
             description: 'zip archive containing index.html'
-        } 
-    */
-
-  /*
+        }
         #swagger.responses[200] = {
             description: "Conversion completed successfully",
             content: {
@@ -117,7 +111,7 @@ export const handleConversion = async (req, res, next) => {
       ); // Генерация ошибки
     }
 
-    const pdf = await htmlToPdf(html); // Конвертация HTML в PDF
+    const pdf = await convertHtmlToPdf(html); // Конвертация HTML в PDF
     if (!pdf) {
       // Если PDF не был создан
       return next(new ConversionError("Something went wrong...")); // Генерация ошибки
