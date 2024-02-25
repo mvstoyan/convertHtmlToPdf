@@ -75,59 +75,74 @@ export const handleConversion = async (req, res, next) => {
 
   upload(req, res, async function (err) {
     // Run middleware to handle uploaded file
-    if (err instanceof multer.MulterError) {
-      // Handle multer errors
-      if (err.code === "LIMIT_FILE_SIZE") {
-        // If the file size limit is exceeded
-        const message = `File size should be less than ${
-          MAX_SIZE / GIGABYTE
-        }GB.`; // Formulate an error message
-        return next(new FileSizeError(message)); // Pass error to the next middleware
+    try {
+      if (err instanceof multer.MulterError) {
+        // Handle multer errors
+        if (err.code === "LIMIT_FILE_SIZE") {
+          // If the file size limit is exceeded
+          const message = `File size should be less than ${
+            MAX_SIZE / GIGABYTE
+          }GB.`; // Formulate an error message
+          return next(new FileSizeError(message)); // Pass error to the next middleware
+        }
+        return next(err); // Handle other multer errors
+      } else if (err) {
+        // If there is another error
+        return next(err); // Handle error
       }
-      return next(err); // Handle other multer errors
-    } else if (err) {
-      // If there is another error
-      return next(err); // Handle error
-    }
 
-    const zipArch = req.file; // Get uploaded archive
-    if (!zipArch) {
-      // If archive is not uploaded
-      return next(new InvalidFileTypeError("Upload an archive"));
-    }
+      const zipArch = req.file; // Get uploaded archive
+      if (!zipArch) {
+        // If archive is not uploaded
+        return next(new InvalidFileTypeError("Upload an archive"));
+      }
 
-    const zipPath = zipArch.path; // Get path to the uploaded archive
-    const extractedFilesFolder = extractFiles(zipPath, EXTRACT_PATH); // Extract files from archive
-    if (!extractedFilesFolder) {
-      // If files are not extracted
-      return next(new FileNotFoundError("Files not found"));
-    }
+      const zipPath = zipArch.path; // Get path to the uploaded archive
+      let extractedFilesFolder;
+      try {
+        extractedFilesFolder = extractFiles(zipPath, EXTRACT_PATH);
+      } catch (extractionError) {
+        return next(extractionError);
+      }
 
-    const html = findHtml(extractedFilesFolder); // Find the HTML file in extracted files
-    if (!html) {
-      return next(
-        new FileNotFoundError("Archive must contain the index.html file")
+      if (!extractedFilesFolder) {
+        return next(new FileNotFoundError("Files not found"));
+      }
+
+      const html = findHtml(extractedFilesFolder);
+      if (!html) {
+        return next(
+          new FileNotFoundError("Archive must contain the index.html file")
+        );
+      }
+
+      let pdf;
+      try {
+        pdf = await convertHtmlToPdf(html);
+      } catch (conversionError) {
+        return next(conversionError);
+      }
+
+      if (!pdf) {
+        return next(new ConversionError("Something went wrong..."));
+      }
+
+      const pdfName = path.parse(zipArch.originalname).name + ".pdf"; // Formulate the name of the PDF file
+      fs.writeFileSync(`${EXTRACT_PATH}/${pdfName}`, pdf); // Write the PDF file to disk
+
+      res.setHeader("Content-Type", "application/pdf"); // Set the Content-Type header
+      res.setHeader("Content-Disposition", `attachment; filename=${pdfName}`); // Set the Content-Disposition header
+      res.contentType("application/pdf"); // Set the content type
+      res.status(OK).send(pdf); // Send the PDF file in response to the request
+
+      const finalExecutionTime = countExecutionTime(convertStart);
+      addLog(
+        "handleConversion",
+        "Conversion completed successfully",
+        finalExecutionTime
       );
+    } catch (error) {
+      return next(error);
     }
-
-    const pdf = await convertHtmlToPdf(html); // Convert HTML to PDF
-    if (!pdf) {
-      return next(new ConversionError("Something went wrong..."));
-    }
-
-    const pdfName = path.parse(zipArch.originalname).name + ".pdf"; // Formulate the name of the PDF file
-    fs.writeFileSync(`${EXTRACT_PATH}/${pdfName}`, pdf); // Write the PDF file to disk
-
-    res.setHeader("Content-Type", "application/pdf"); // Set the Content-Type header
-    res.setHeader("Content-Disposition", `attachment; filename=${pdfName}`); // Set the Content-Disposition header
-    res.contentType("application/pdf"); // Set the content type
-    res.status(OK).send(pdf); // Send the PDF file in response to the request
-
-    const finalExecutionTime = countExecutionTime(convertStart);
-    addLog(
-      "handleConversion",
-      "Conversion completed successfully",
-      finalExecutionTime
-    );
   });
 };
