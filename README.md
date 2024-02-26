@@ -58,3 +58,11 @@ npm start
 You can explore a live demo of the HTML to PDF Conversion Microservice hosted on Render.com:
 
 - **Backend - Swagger-documentation:** [linkRender](linkRender) -->
+
+<!-- ### Docker
+```
+docker build . -t your-dockerhub-name/convertHtmlToPdf
+```
+```
+docker run -p 5000:8080  your-dockerhub-name/convertHtmlToPdf
+``` -->

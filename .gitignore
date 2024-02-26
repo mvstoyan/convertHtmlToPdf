@@ -22,7 +22,7 @@ yarn-error.log*
 
 # testing folders
 output/
-postman/
+files/
 uploads/
 
 # logs

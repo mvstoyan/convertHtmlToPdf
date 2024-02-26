@@ -27,7 +27,7 @@
   "nodemonConfig": {
     "ignore": [
       "logs.json",
-      "postman"
+      "files"
     ]
   }
 }
