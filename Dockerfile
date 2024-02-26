@@ -12,4 +12,4 @@ COPY . /home/node/app
 
 EXPOSE 8080
 
-CMD npm start & npm run dev
+CMD npm start && npm run dev
