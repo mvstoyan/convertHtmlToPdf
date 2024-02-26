@@ -12,6 +12,14 @@ const defaultOptions = {
   preferCSSPageSize: true,
 };
 
+/**
+ * Function converts HTML to PDF file using Puppeteer.
+ * 
+ * @param {string} html - HTML to be converted to PDF.
+ * @returns {Buffer} - PDF file as a Buffer.
+ * @throws {ConversionError} - Thrown if an error occurs during the conversion process.
+ */
+
 async function convertHtmlToPdf(html, options = defaultOptions) {
   const start = Date.now(); // Record the start time of the function execution
   let message = ""; // Variable to store the status message of the operation

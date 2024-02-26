@@ -2,6 +2,13 @@ import { mkdir } from "fs/promises";
 import addLog from "./addLog.js";
 import countExecutionTime from "./countExecutionTime.js";
 
+/**
+ * Function creates a new directory at the specified path.
+ * 
+ * @param {string} path - path where the new directory will be created.
+ * @throws {Error} - Throws an error if there is problem creating directory.
+ */
+
 async function createDirectory(path) {
   const start = Date.now();
 

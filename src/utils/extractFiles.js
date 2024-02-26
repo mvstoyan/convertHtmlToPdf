@@ -5,6 +5,15 @@ import addLog from "./addLog.js";
 import countExecutionTime from "./countExecutionTime.js";
 import { FileNotFoundError } from "../errors/customErrors.js";
 
+/**
+ * Function extracts files from a zip archive.
+ * 
+ * @param {string} zipPath - path to zip archive.
+ * @param {string} [outputPath] - path to the folder where files will be extracted. If not provided, files will be extracted to the same directory as zip archive.
+ * @returns {string} - path to the folder where files are extracted.
+ * @throws {FileNotFoundError} - Throws an error if zip archive is not found or if there is an error during extraction.
+ */
+
 function extractFiles(zipPath, outputPath) {
   const start = Date.now();
   let message = "";

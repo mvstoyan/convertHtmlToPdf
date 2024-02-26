@@ -2,6 +2,13 @@ import fs from "fs/promises";
 
 const LOGFILE = "./logs.json";
 
+/**
+ * function adds a log entry to the specified log file.
+ * 
+ * @param {string} functionName - function name where log entry is added.
+ * @param {string} logText - text content of the log entry.
+ */
+
 async function addLog(functionName, logText, executionTime = null) {
   let logEntries = [];
 
