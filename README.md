@@ -15,13 +15,13 @@ To install the application, follow these steps:
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/mvstoyan/Project
+   git clone https://github.com/mvstoyan/convertHtmlToPdf
    ```
 
 2. Navigate to the project directory:
 
 ```bash
-cd HTML to PDF Conversion Microservice
+cd convertHtmlToPdf
 ```
 
 3. Install the project dependencies:
@@ -59,10 +59,10 @@ You can explore a live demo of the HTML to PDF Conversion Microservice hosted on
 
 - **Backend - Swagger-documentation:** [HTML to PDF Conversion Microservice](https://converthtmltopdf.onrender.com/api-docs/)
 
-<!-- ### Docker
+### Docker
 ```
-docker build . -t your-dockerhub-name/convertHtmlToPdf
+docker build . -t your-dockerhub-name/convert-html-to-pdf
 ```
 ```
-docker run -p 5000:8080  your-dockerhub-name/convertHtmlToPdf
-``` -->
+docker run -p 5000:8080  your-dockerhub-name/convert-html-to-pdf
+```
